@@ -1,0 +1,5 @@
+rootProject.name = 'next-gen-api'
+include 'server'
+findProject(':server')?.name = 'next-gen-api-server'
+include 'buildSrc'
+

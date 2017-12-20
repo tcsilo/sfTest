@@ -1,0 +1,76 @@
+apply plugin: 'com.github.johnrengelman.shadow'
+
+description = "Next Gen Api"
+
+dependencies {
+    compile "com.spredfast.common:dropwizard:$sfCommonVersion"
+    compile "com.spredfast.common:logging-logback:$sfCommonVersion"
+    compile "com.spredfast.common:metrics-core:$sfCommonVersion"
+    compile "com.spredfast.idmanagement:idmanagement-client:$sfIdManagementVersion"
+
+    compile "com.fasterxml.jackson.module:jackson-module-scala_2.11:$jacksonScalaVersion"
+    compile "de.thomaskrille:dropwizard-template-config:$dropwizardTemplateVersion"
+    compile "io.dropwizard:dropwizard-assets:$dropwizardVersion"
+    compile "io.dropwizard:dropwizard-auth:$dropwizardVersion"
+    compile "io.dropwizard:dropwizard-core:$dropwizardVersion"
+    compile "io.dropwizard:dropwizard-migrations:$dropwizardVersion"
+    compile "io.swagger:swagger-jersey-jaxrs:$swaggerVersion"
+    compile "mysql:mysql-connector-java:$mysqlVersion"
+    compile "org.liquibase:liquibase-core:$liquibaseVersion"
+    compile "org.springframework:spring-orm:$springVersion"
+    compile "org.yaml:snakeyaml:$snakeYamlVersion"
+
+    testCompile "com.spredfast.common:logging-core-testsupport:$sfCommonVersion"
+    testCompile "com.spredfast.common:test:$sfCommonVersion"
+    testCompile "commons-io:commons-io:$apacheCommonsIO"
+    testCompile "io.dropwizard:dropwizard-testing:$dropwizardVersion"
+    testCompile "javax.ws.rs:jsr311-api:$jaxrsVersion"
+}
+
+tasks.withType(Jar) {
+    manifest {
+        attributes "Main-Class": 'com.spredfast.nextgenapi.dropwizard.NextGenApiServer',
+                "Implementation-Version": project.version,
+                "Implementation-Vendor": "Spredfast, Inc.",
+                "Implementiation-Title": project.description
+    }
+}
+
+tasks.withType(JavaExec) {
+    if (System.properties.containsKey("sfDebug") || System.getProperty("sfDebug") != null) {
+        jvmArgs('-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005')
+    }
+}
+
+task runServerImpl(type: JavaExec) {
+    description = 'Run the Dropwizard service locally.'
+    group = 'Development'
+    main = 'com.spredfast.nextgenapi.dropwizard.NextGenApiServer'
+    classpath = sourceSets.main.runtimeClasspath
+    classpath += files('../deploy')
+    args = ['server', 'src/main/resources/config/config.yml']
+}
+
+task runServer(dependsOn: ['runServerImpl']) {
+    description = 'Provisions the environment then runs the Dropwizard server.'
+    group = 'Development'
+}
+
+def shadowFile = project.hasProperty('shadowFileName') ? project.shadowFileName : 'next-gen-api-shadow.jar'
+def shadowBaseDir = new File(buildDir, "libs")
+
+shadowJar {
+    mergeServiceFiles()
+    zip64 true
+    archiveName = shadowFile
+    destinationDir = shadowBaseDir
+    exclude "META-INF/*.SF"
+    exclude "META-INF/*.DSA"
+    exclude "META-INF/*.RSA"
+
+    transform(com.github.jengelman.gradle.plugins.shadow.transformers.AppendingTransformer) {
+        resource = 'reference.conf'
+    }
+}
+
+tasks['shadowJar'].dependsOn jar

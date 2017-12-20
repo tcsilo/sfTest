@@ -1,0 +1,6 @@
+apply from: '../repositories.gradle'
+
+dependencies {
+    compile "com.github.jengelman.gradle.plugins:shadow:1.2.3"
+    compile "com.spredfast.gradle.build:sf-build-version:1.0.0"
+}

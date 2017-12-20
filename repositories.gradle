@@ -1,0 +1,14 @@
+repositories {
+    def sfUsername = project.hasProperty('spredfastRepoUsername') ? spredfastRepoUsername : System.getenv('SPREDFAST_REPO_USERNAME')
+    def sfPassword = project.hasProperty('spredfastRepoPassword') ? spredfastRepoPassword : System.getenv('SPREDFAST_REPO_PASSWORD')
+
+    maven {
+        credentials {
+            username sfUsername
+            password sfPassword
+        }
+        name 'Spredfast Dependencies'
+        url 'https://buildrepo.sf-ops.net/artifactory/sf-repo'
+    }
+    mavenLocal()
+}

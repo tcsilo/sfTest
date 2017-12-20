@@ -1,0 +1,69 @@
+allprojects {
+    group = 'com.spredfast.netgenapi'
+
+    apply from: new File(rootDir, 'repositories.gradle')
+
+    ext {
+        sfCommonVersion = '17.15.1'
+        sfConversationsClientVersion = '0.0.19'
+        sfIdManagementVersion = '4.8.1'
+        sfRiverstoreVersion = '2.41.1'
+
+        apacheCommonsIO = '2.5'
+        dropwizardVersion = '0.7.1'
+        dropwizardTemplateVersion = '1.5.0'
+        guavaVersion = '20.0'
+        hamcrestVersion = '1.3'
+        jacksonScalaVersion = '2.8.7'
+        jacksonVersion = '2.8.7'
+        jaxrsVersion = '1.1.1'
+        jsoupVersion = '1.8.3'
+        junitVersion = '4.11'
+        liquibaseVersion = '3.5.3'
+        mockitoVersion = '1.10.19'
+        mysqlVersion = '5.1.39'
+        scalatestVersion = '3.0.1'
+        scalaVersion = '2.11.8'
+        slf4jVersion = '1.7.9'
+        snakeYamlVersion = '1.12'
+        springVersion = '4.1.3.RELEASE'
+        swaggerVersion='1.5.13'
+        thriftVersion = '0.9.0'
+        twitterTextVersion = '1.14.7'
+    }
+
+    gradle.projectsEvaluated {
+        tasks.withType(JavaCompile) {
+            options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation"
+        }
+    }
+}
+
+apply plugin: 'idea'
+
+buildscript {
+    repositories {
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
+    }
+    dependencies {
+        classpath "gradle.plugin.com.avast.gradle:docker-compose-gradle-plugin:0.3.22"
+    }
+}
+
+subprojects {
+    apply plugin: 'java'
+    apply plugin: 'maven'
+
+    dependencies {
+        compile "com.spredfast.common:logging-logback:$sfCommonVersion"
+
+        testCompile "org.hamcrest:hamcrest-all:$hamcrestVersion"
+        testCompile "org.mockito:mockito-all:$mockitoVersion"
+        testCompile "junit:junit:$junitVersion"
+    }
+
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+}

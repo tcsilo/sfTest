@@ -1,0 +1,66 @@
+*.class
+
+# Mobile Tools for Java (J2ME)
+.mtj.tmp/
+
+# Package Files #
+*.jar
+*.war
+*.ear
+
+# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
+hs_err_pid*
+
+# IntelliJ files
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# Mac files
+.DS_Store
+
+# Gradle
+.gradletasknamecache
+.gradle
+build/
+*build_version.json
+out/
+
+# dandy/ruby related files
+.rbenv-gemsets
+.ruby-version
+Gemfile.lock
+
+# spark
+spark/target/
+spark/project/
+
+# Scala
+*.log
+
+# sbt specific
+.cache
+.history
+.lib/
+dist/*
+target/
+lib_managed/
+src_managed/
+project/boot/
+project/plugins/project/
+
+# Scala-IDE specific
+.scala_dependencies
+.worksheet
+
+# ENSIME specific
+.ensime_cache/
+.ensime
+
+classes/
+out/
+
+/project
+
+META-INF
