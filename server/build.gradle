@@ -4,28 +4,11 @@ description = "Next Gen Api"
 
 dependencies {
     compile "com.spredfast.common:dropwizard:$sfCommonVersion"
-    compile "com.spredfast.common:logging-logback:$sfCommonVersion"
-    compile "com.spredfast.common:metrics-core:$sfCommonVersion"
-    compile "com.spredfast.idmanagement:idmanagement-client:$sfIdManagementVersion"
 
-    compile "com.fasterxml.jackson.module:jackson-module-scala_2.11:$jacksonScalaVersion"
-    compile "de.thomaskrille:dropwizard-template-config:$dropwizardTemplateVersion"
-    compile "io.dropwizard:dropwizard-assets:$dropwizardVersion"
-    compile "io.dropwizard:dropwizard-auth:$dropwizardVersion"
     compile "io.dropwizard:dropwizard-core:$dropwizardVersion"
-    compile "io.dropwizard:dropwizard-migrations:$dropwizardVersion"
-    compile "io.swagger:swagger-jersey-jaxrs:$swaggerVersion"
-    compile "mysql:mysql-connector-java:$mysqlVersion"
-    compile "org.liquibase:liquibase-core:$liquibaseVersion"
-    compile "org.springframework:spring-orm:$springVersion"
-    compile "org.yaml:snakeyaml:$snakeYamlVersion"
-
-    testCompile "com.spredfast.common:logging-core-testsupport:$sfCommonVersion"
-    testCompile "com.spredfast.common:test:$sfCommonVersion"
-    testCompile "commons-io:commons-io:$apacheCommonsIO"
-    testCompile "io.dropwizard:dropwizard-testing:$dropwizardVersion"
-    testCompile "javax.ws.rs:jsr311-api:$jaxrsVersion"
 }
+
+tasks.getByName("processResources").dependsOn("buildVersion")
 
 tasks.withType(Jar) {
     manifest {
@@ -36,12 +19,6 @@ tasks.withType(Jar) {
     }
 }
 
-tasks.withType(JavaExec) {
-    if (System.properties.containsKey("sfDebug") || System.getProperty("sfDebug") != null) {
-        jvmArgs('-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005')
-    }
-}
-
 task runServerImpl(type: JavaExec) {
     description = 'Run the Dropwizard service locally.'
     group = 'Development'
@@ -49,10 +26,11 @@ task runServerImpl(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     classpath += files('../deploy')
     args = ['server', 'src/main/resources/config/config.yml']
+    debug = System.getProperty("sfDebug")!=null
 }
 
-task runServer(dependsOn: ['runServerImpl']) {
-    description = 'Provisions the environment then runs the Dropwizard server.'
+task runServer(dependsOn: ['runServerImpl', 'classes']) {
+    description = 'Runs the Dropwizard server.'
     group = 'Development'
 }
 

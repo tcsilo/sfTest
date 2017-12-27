@@ -14,7 +14,6 @@ public class NextGenApiServer extends BaseServer<NextGenApiConfiguration> {
 	private static final Logger LOGGER = LoggerFactory.getLogger(NextGenApiServer.class);
 
 	public static void main(String[] args) throws Exception {
-		LOGGER.info("RUNNING");
 		new NextGenApiServer().run(args);
 	}
 
